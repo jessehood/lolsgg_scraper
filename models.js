@@ -88,7 +88,6 @@ class ChampionStats {
 
 class LolsGgRequest {
   constructor(opts) {
-    console.log(opts);
     this.accountId = opts.accountId;
     this.lang = opts.lang;
     this.startPage = opts.startPage;
