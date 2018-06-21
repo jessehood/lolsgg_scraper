@@ -51,9 +51,10 @@ async function getAccountInfo(username, region = 'NA') {
   const form = new FormData();
   form.append('summonerName', username);
   form.append('region', region);
-  const req = await axios.post(ACCOUNT_INFO_URL, form, { headers: form.getHeaders() });
-  console.log(req);
-  return req.data;
+  try {
+    const req = await axios.post(ACCOUNT_INFO_URL, form, { headers: form.getHeaders() });
+    return req.data;
+  } catch (err) { console.log (err); }
 }
 
 module.exports = {
