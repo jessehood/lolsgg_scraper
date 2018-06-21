@@ -1,3 +1,4 @@
+const FormData = require('form-data');
 class Summoner {
   constructor(summonerId = '', username = '') {
     this.summonerId = summonerId;
@@ -85,7 +86,39 @@ class ChampionStats {
   }
 }
 
+class LolsGgRequest {
+  constructor(opts) {
+    console.log(opts);
+    this.accountId = opts.accountId;
+    this.lang = opts.lang;
+    this.startPage = opts.startPage;
+    this.endPage = opts.endPage || opts.startPage;
+    this.region = opts.region;
+    this.summonerId = opts.summonerId;
+  }
+
+  toForm(pageNumber) {
+    const form = new FormData();
+    form.append('accountId', this.accountId);
+    form.append('lang', this.lang);
+    form.append('page', pageNumber);
+    form.append('region', this.region);
+    form.append('summonerId', this.summonerId);
+    return form;
+
+  }
+
+  toFormArray() {
+    const forms = [];
+    for (let i = this.startPage; i <= this.endPage; i++) {
+      forms.push(this.toForm(i));
+    }
+    return forms;
+  }
+}
+
 module.exports = {
   Summoner,
   ChampionStats,
+  LolsGgRequest,
 };
