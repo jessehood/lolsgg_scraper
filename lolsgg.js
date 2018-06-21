@@ -1,19 +1,18 @@
 const axios = require('axios').default;
-const url = 'https://api.lols.gg/Api/Matches/matchHistory';
 const FormData = require('form-data');
-const { ChampionStats, Summoner } = require('./models');
+const { ChampionStats, Summoner, LolsGgRequest } = require('./models');
+const MATCH_HISTORY_URL = 'https://api.lols.gg/Api/Matches/matchHistory';
+const ACCOUNT_INFO_URL = 'https://api.lols.gg/Api/Main/summonerId';
 
-function buildFormData(page) {
-  var form = new FormData();
-  form.append('accountId', '243554303'); // summoner name: TSM Zven
-  form.append('lang', 'en');
-  form.append('page', page);
-  form.append('region', 'NA');
-  form.append('summonerId', '91419120');
-  return form;
-}
+var sampleFormData = {
+  accountId: '243554303', // summoner name: TSM Zven
+  lang: 'en',
+  page: 1,
+  region: 'NA',
+  summonerId: '91419120',
+};
 
-function getStats(page) {
+function getStatsForPage(page) {
   const matches = Object.values(page.matches);
   const summoner = new Summoner(matches[0].summoner.summonerId, matches[0].summoner.summonerName);
   const championStats = new ChampionStats(summoner);
@@ -21,26 +20,43 @@ function getStats(page) {
   return championStats;
 }
 
-async function getPage(page) {
-    const form = buildFormData(page);
-    const req = await axios.post(url, form, { headers: form.getHeaders() });
-    const stats = getStats(req.data);
+/**
+ * @param {FormData} form
+ */
+async function getPage(form) {
+    const req = await axios.post(MATCH_HISTORY_URL, form, { headers: form.getHeaders() });
+    const stats = getStatsForPage(req.data);
     return stats;
 }
 
-async function getPages(startPage, endPage) {
+/**
+ * @param {LolsGgRequest} lolsGgRequest
+ */
+async function getStats(lolsGgRequest) {
   try {
-    var pageRange = Array(endPage).fill(startPage).map((x,y) => x + y);
-    var pages = await Promise.all(pageRange.map(page => getPage(page)));
-    var stats = pages.reduce((acc, next) => {
+    const stats = await Promise.all(
+      lolsGgRequest.toFormArray().map(async (form) => await getPage(form))
+    );
+    return stats.reduce((acc, next) => {
       acc.fold(next);
       return acc;
     });
-    return stats;
   } catch (err) { console.log(err); }
 }
 
-module.exports = {
-  getPage,
-  getPages
+/**
+ * Obtains the summoner's summonerId and accountId (needed for the match history API)
+ */
+async function getAccountInfo(username, region = 'NA') {
+  const form = new FormData();
+  form.append('summonerName', username);
+  form.append('region', region);
+  const req = await axios.post(ACCOUNT_INFO_URL, form, { headers: form.getHeaders() });
+  console.log(req);
+  return req.data;
 }
+
+module.exports = {
+  getStats,
+  getAccountInfo
+};
