@@ -1,8 +1,9 @@
 const FormData = require('form-data');
 class Summoner {
-  constructor(summonerId = '', username = '') {
-    this.summonerId = summonerId;
-    this.username = username;
+  constructor(opts) {
+    this.summonerId = opts.summonerId;
+    this.accountId = opts.accountId;
+    this.summonerName = opts.summonerName;
   }
 }
 
@@ -88,21 +89,20 @@ class ChampionStats {
 
 class LolsGgRequest {
   constructor(opts) {
-    this.accountId = opts.accountId;
+    this.summoner = opts.summoner;
     this.lang = opts.lang;
     this.startPage = opts.startPage;
     this.endPage = opts.endPage || opts.startPage;
     this.region = opts.region;
-    this.summonerId = opts.summonerId;
   }
 
   toForm(pageNumber) {
     const form = new FormData();
-    form.append('accountId', this.accountId);
+    form.append('accountId', this.summoner.accountId);
     form.append('lang', this.lang);
     form.append('page', pageNumber);
     form.append('region', this.region);
-    form.append('summonerId', this.summonerId);
+    form.append('summonerId', this.summoner.summonerId);
     return form;
 
   }
