@@ -4,14 +4,6 @@ const { ChampionStats, Summoner, LolsGgRequest } = require('./models');
 const MATCH_HISTORY_URL = 'https://api.lols.gg/Api/Matches/matchHistory';
 const ACCOUNT_INFO_URL = 'https://api.lols.gg/Api/Main/summonerId';
 
-var sampleFormData = {
-  accountId: '243554303', // summoner name: TSM Zven
-  lang: 'en',
-  page: 1,
-  region: 'NA',
-  summonerId: '91419120',
-};
-
 function getStatsForPage(page) {
   const matches = Object.values(page.matches);
   const summoner = new Summoner(matches[0].summoner.summonerId, matches[0].summoner.summonerName);
