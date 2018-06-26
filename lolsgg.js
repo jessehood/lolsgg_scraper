@@ -33,8 +33,10 @@ async function getStats(lolsGgRequest) {
       acc.fold(next);
       return acc;
     });
-    combinedStats.summoner = lolsGgRequest.summoner;
-    return combinedStats;
+    return {
+      summoner: lolsGgRequest.summoner,
+      stats: Object.values(combinedStats.stats)
+    };
   } catch (err) { console.log(err); }
 }
 
