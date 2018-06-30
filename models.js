@@ -4,6 +4,7 @@ class Summoner {
     this.summonerId = opts.summonerId;
     this.accountId = opts.accountId;
     this.summonerName = opts.summonerName;
+    this.region = opts.region;
   }
 }
 
