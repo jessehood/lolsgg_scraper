@@ -1,12 +1,1 @@
-Sample request: 
-```
-{  
-	"summonerName": "TSM Zven",
-	"lang": "en",
-	"startPage": 1,
-	"endPage": 2,
-	"region": "NA",
-}
-```
-
-A better readme is coming soon...
+This repo is now deprecated due to changes to the lols.gg api no longer allowing this service to work.
